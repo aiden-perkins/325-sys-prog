@@ -1,6 +1,6 @@
 // Aiden Perkins
 // CECS 325-02
-// Prog 1 – Counting Letters
+// Prog 1 – One Card War
 // Due 2-15-2024
 //
 // I certify that this program is my own original work. I did not copy any part of this program from
@@ -72,9 +72,6 @@ int main() {
     cout << left << setw(7) << "Wins" << setw(player1Name.length() + 5) << player1Wins << player2Wins << endl;
     cout << left << setw(7) << "Losses" << setw(player1Name.length() + 5) << player1Losses << player2Losses << endl;
     cout << left << setw(7) << "Ties" << setw(player1Name.length() + 5) << ties << ties << endl;
-
-    // TODO: Card compare & deck shuffle.
-    // Ask about char for rank as 10 can't be a char.
 
     return 0;
 }

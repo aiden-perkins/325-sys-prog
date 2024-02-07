@@ -1,6 +1,6 @@
 // Aiden Perkins
 // CECS 325-02
-// Prog 1 – Counting Letters
+// Prog 1 – One Card War
 // Due 2-15-2024
 //
 // I certify that this program is my own original work. I did not copy any part of this program from
@@ -10,13 +10,16 @@
 #include <vector>
 #include "Card.h"
 
+using namespace std;
+
 class Deck {
+    private:
+        vector<Card> cards;
     public:
         Deck();  // constructor which creates a deck of 52 cards
         Card deal();  // deal a card
         void display();  // show all the cards in the deck
         void shuffle();  // shuffle the cards in the deck
-        vector<Card> cards;
 };
 
 #endif //DECK_H

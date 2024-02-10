@@ -37,6 +37,7 @@ void Deck::display() {
 }
 
 void Deck::shuffle() {
+    srand(time(nullptr));
     vector<Card> new_deck;
     for (int i = cards.size(); i > 0; i--) {
         int rand_value = rand() % i;

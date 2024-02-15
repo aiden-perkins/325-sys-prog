@@ -13,7 +13,7 @@ using namespace std;
 Deck::Deck() {
     for (char suit: {'C', 'S', 'D', 'H'}) {
         for (char rank: {'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'}) {
-            cards.push_back(Card(suit, rank));
+            cards.emplace_back(suit, rank);
         }
     }
 }

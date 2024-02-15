@@ -14,9 +14,9 @@ class Card {
         char suit;
         char rank;
     public:
-        Card(char suit, char rank);  // constructor to create a card, setting the suit and rank
-        void display();  // display the card example: AC, 10S, KD
-        int compare(Card card);  // return 1 for win, 0 for tie, -1 for lose
+        Card(char, char);  // constructor to create a card, setting the suit and rank
+        void display() const;  // display the card example: AC, 10S, KD
+        int compare(Card) const;  // return 1 for win, 0 for tie, -1 for lose
 };
 
 #endif //CARD_H

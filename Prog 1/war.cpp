@@ -69,9 +69,9 @@ int main() {
     // After all 26 games are played the program will print the statistics.
     cout << "------Final Stats-------" << endl;
     cout << setw(7) << left << ' ' << player1Name << " vs. " << player2Name << endl;
-    cout << left << setw(7) << "Wins" << setw(player1Name.length() + 5) << player1Wins << player2Wins << endl;
-    cout << left << setw(7) << "Losses" << setw(player1Name.length() + 5) << player1Losses << player2Losses << endl;
-    cout << left << setw(7) << "Ties" << setw(player1Name.length() + 5) << ties << ties << endl;
+    cout << left << setw(7) << "Wins" << setw(int(player1Name.length()) + 5) << player1Wins << player2Wins << endl;
+    cout << left << setw(7) << "Losses" << setw(int(player1Name.length()) + 5) << player1Losses << player2Losses << endl;
+    cout << left << setw(7) << "Ties" << setw(int(player1Name.length()) + 5) << ties << ties << endl;
 
     return 0;
 }

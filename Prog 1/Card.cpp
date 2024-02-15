@@ -16,7 +16,7 @@ Card::Card(char suit, char rank) {
     Card::rank = rank;
 }
 
-void Card::display() {
+void Card::display() const {
     if (rank == 'T') {
         cout << "10" << suit;
     } else {
@@ -24,7 +24,7 @@ void Card::display() {
     }
 }
 
-int Card::compare(Card card) {
+int Card::compare(Card card) const {
     map<char, int> rank_map = {
         {'A', 1}, {'2', 2}, {'3', 3}, {'4', 4}, {'5', 5},
         {'6', 6}, {'7', 7}, {'8', 8}, {'9', 9},

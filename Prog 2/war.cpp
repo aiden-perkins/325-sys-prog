@@ -18,113 +18,68 @@ class Card {
         char suit;
         char rank;
     public:
-        Card();  // default constructor – needed for array in Deck class
-        Card(char, char);  // constructor to create a card, setting the suit and rank
-        void display() const;  // display the card example: AC, 10S, KD
-        int compare(Card) const;  // return 1 for win, 0 for tie, -1 for lose
+        Card() {}  // default constructor – needed for array in Deck class
+
+        Card(char s, char r) {  // constructor to create a card, setting the suit and rank
+            suit = s;
+            rank = r;
+        }
+
+        void display() const {  // display the card example: AC, 10S, KD
+            rank == 'T' ? cout << "10" << suit : cout << rank << suit;
+        }
+
+        int compare(Card card) const {  // return 1 for win, 0 for tie, -1 for lose
+            map<char, int> rank_map = {
+                {'A', 1}, {'2', 2}, {'3', 3}, {'4', 4}, {'5', 5},
+                {'6', 6}, {'7', 7}, {'8', 8}, {'9', 9},
+                {'T', 10}, {'J', 11}, {'Q', 12}, {'K', 13}
+            };
+            return (rank == card.rank ? 0 : (rank_map[rank] > rank_map[card.rank] ? 1 : -1));
+        }
 };
-
- Card::Card() {
-    suit = 'N';
-    rank = 'N';
-}
-
-Card::Card(char suit, char rank) {
-    Card::suit = suit;
-    Card::rank = rank;
-}
-
-void Card::display() const {
-    if (rank == 'T') {
-        cout << "10" << suit;
-    } else {
-        cout << rank << suit;
-    }
-}
-
-int Card::compare(Card card) const {
-    map<char, int> rank_map = {
-        {'A', 1}, {'2', 2}, {'3', 3}, {'4', 4}, {'5', 5},
-        {'6', 6}, {'7', 7}, {'8', 8}, {'9', 9},
-        {'T', 10}, {'J', 11}, {'Q', 12}, {'K', 13}
-    };
-    if (rank == card.rank) {
-        return 0;
-    } else if (rank_map[rank] > rank_map[card.rank]) {
-        return 1;
-    } else {
-        return -1;
-    }
-}
 
 class Deck {
     private:
         Card cards[52];
+        int backOfDeck;
     public:
-        Deck();  // constructor which creates a deck of 52 cards
-        Card deal();  // deal a card
-        void display();  // show all the cards in the deck
-        void shuffle();  // shuffle the cards in the deck
-        bool isEmpty(); // return true if deck is empty
+        Deck() {  // constructor which creates a deck of 52 cards
+            backOfDeck = 51;
+            char suits[4] = {'C', 'S', 'D', 'H'};
+            char ranks[13] = {'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'};
+            for (int i = 0; i < 52; i++) cards[i] = Card(suits[i / 13], ranks[i % 13]);
+        }
+
+        Card deal() {  // deal a card
+            if (isEmpty()) throw "Deck is empty";
+            Card card = cards[backOfDeck];
+            backOfDeck--;
+            return card;
+        }
+
+        void display() {  // show all the cards in the deck
+            for (int i = 0; i < 52; i++) {
+                cards[i].display();
+                cout << ((i + 1) % 13 ? ',' : '\n');
+            }
+        }
+
+        void shuffle() {  // shuffle the cards in the deck
+            srand(time(nullptr));
+            for (int i = 0; i < 10000; i++) {
+                int rand_value_1 = rand() % 52;
+                int rand_value_2 = rand() % 52;
+                Card temp = cards[rand_value_1];
+                cards[rand_value_1] = cards[rand_value_2];
+                cards[rand_value_2] = temp;
+            }
+        }
+
+        bool isEmpty() const {  // return true if deck is empty
+            return backOfDeck < 0;
+        }
 };
-
-Deck::Deck() {
-    char suits[4] = {'C', 'S', 'D', 'H'};
-    char ranks[13] = {'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'};
-    for (int i = 0; i < 52; i++) {
-        cards[i] = Card(suits[i / 13], ranks[i % 13]);
-    }
-}
-
-Card Deck::deal() {
-    if (isEmpty()) {
-        throw runtime_error("The deck is empty.");
-    }
-    int i = 51;
-    while (cards[i].compare(Card('C', 'A')) == -1) {
-        i--;
-    }
-    Card card = cards[i];
-    cards[i] = Card();
-    return card;
-}
-
-void Deck::display() {
-    for (int i = 0; i < 52; i++) {
-        cards[i].display();
-        if ((i + 1) % 13) {
-            cout << ',';
-        } else {
-            cout << endl;
-        }
-    }
-}
-
-void Deck::shuffle() {
-    srand(time(nullptr));
-    for (int i = 0; i < 10000; i++) {
-        int rand_value_1 = rand() % 52;
-        int rand_value_2 = rand() % 52;
-        Card temp = cards[rand_value_1];
-        cards[rand_value_1] = cards[rand_value_2];
-        cards[rand_value_2] = temp;
-    }
-}
-
-bool Deck::isEmpty() {
-    return all_of(begin(cards), end(cards), [](Card card){
-        return card.compare(Card('C', 'A')) == -1;
-    });
-    /*
-    for (Card card: cards) {
-        if (card.compare(Card('C', 'A')) != -1) {
-            return false;
-        }
-    }
-    return true;
-     */
-}
-
 
 int main() {
     // A new deck will be created.
@@ -146,7 +101,7 @@ int main() {
     cout << "How many games will they play? ";
     cin >> gamesToPlay;
     cout << endl;
-    // The unshuffled deck will be displayed on the screen.
+    // The un-shuffled deck will be displayed on the screen.
     cout << " Original Deck" << endl;
     deck.display();
     cout << endl;
@@ -184,8 +139,8 @@ int main() {
                 player2Wins++;
                 player1Losses++;
             }
-        } catch (const runtime_error& error) {
-            cout << "Error - Deck is empty" << endl;
+        } catch (const char* error) {
+            cout << "Error - " << error << endl;
             break;
         }
     }

@@ -1,4 +1,8 @@
 *.out
 *.exe
+*.log
 .idea
 cmake-build-debug
+/Prog 3/numbers.dat
+/Prog 3/generate
+/Prog 3/mysort

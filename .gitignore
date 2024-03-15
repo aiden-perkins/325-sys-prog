@@ -6,3 +6,6 @@ cmake-build-debug
 /Prog 3/numbers.dat
 /Prog 3/generate
 /Prog 3/mysort
+/Prog 4/numbers.dat
+/Prog 4/generate
+/Prog 4/mysort

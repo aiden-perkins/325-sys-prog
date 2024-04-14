@@ -9,3 +9,7 @@ cmake-build-debug
 /Prog 4/numbers.dat
 /Prog 4/generate
 /Prog 4/mysort
+/Prog 5/bucketList
+/Prog 5++/numbers.dat
+/Prog 5++/generate
+/Prog 5++/bucketList

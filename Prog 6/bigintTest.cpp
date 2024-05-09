@@ -17,261 +17,242 @@ using namespace std;
 class BigInt {
     private:
         vector<char> digits;
-        BigInt fiboHelper(const BigInt&, const BigInt&, const BigInt&);
-        BigInt factHelper(const BigInt&, const BigInt&);
-    public:
-        BigInt();
-        BigInt(int);
-        BigInt(string);
 
-        BigInt &operator=(const BigInt&);
-
-        BigInt operator++();
-        BigInt operator++(int);
-
-        friend BigInt &operator+=(BigInt&, const BigInt&);
-        friend BigInt operator+(const BigInt&, const BigInt&);
-        friend BigInt operator+(const int&, const BigInt&);
-        friend BigInt operator-(const BigInt&, const BigInt&);
-        friend BigInt operator-(const BigInt&, const int&);
-        friend BigInt operator*(const BigInt&, const BigInt&);
-        friend BigInt operator/(const BigInt&, const BigInt&);
-        friend BigInt operator%(const BigInt&, const BigInt&);
-
-        friend bool operator==(const BigInt&, const BigInt&);
-        friend bool operator>(const BigInt&, const BigInt&);
-        char operator[](int) const; // index function
-        void print();
-        int size() const;
-
-        BigInt fibo(); // calls fiboHelper
-        BigInt fact();
-
-        friend ostream& operator<<(ostream&, const BigInt&);
-};
-
-BigInt BigInt::fiboHelper(const BigInt &n, const BigInt &a = 0, const BigInt &b = 1) {
-    if (n == 0) {
-        return a;
-    } else if (n == 1) {
-        return b;
-    } else {
-        return fiboHelper(n - 1, b, a + b);
-    }
-}
-
-BigInt BigInt::factHelper(const BigInt &n, const BigInt &a = 1) {
-    if (2 > n) {
-        return a;
-    }
-    return factHelper(n - 1, n * a);
-}
-
-BigInt::BigInt() = default;
-
-BigInt::BigInt(int num) {
-    if (num == 0) {
-        digits.push_back(0);
-    } else {
-        while (num > 0) {
-            digits.push_back(num % 10);
-            num /= 10;
-        }
-    }
-}
-
-BigInt::BigInt(string str) {
-    for (int i = int(str.size()) - 1; i > -1; --i) {
-        digits.push_back(str[i] - '0');
-    }
-}
-
-BigInt &BigInt::operator=(const BigInt &a) = default;
-
-BigInt operator+(const BigInt &a, const BigInt &b) {
-    if (a > b) {
-        BigInt result = a;
-        result += b;
-        return result;
-    } else {
-        BigInt result = b;
-        result += a;
-        return result;
-    }
-}
-
-BigInt operator+(const int &a, const BigInt &b) {
-    return b + BigInt(a);
-}
-
-BigInt operator-(const BigInt &a, const BigInt &b) {
-    // This function assumes a >= b.
-    BigInt result = a;
-    int aSize = int(result.size());
-    int bSize = int(b.size());
-    for (int i = 0; i < aSize; ++i) {
-        if (i < bSize) {
-            if (result[i] >= b[i]) {
-                result.digits[i] = result[i] - b[i];
+        BigInt fiboHelper(BigInt n, BigInt a = 0, const BigInt &b = 1) {
+            if (n == 0) {
+                return a;
+            } else if (n == 1) {
+                return b;
             } else {
-                result.digits[i] = (result[i] + 10) - b[i];
-                int j = 1;
-                while (result[i + j] == 0) {
-                    result.digits[i + j] = 9;
-                    j++;
+                return fiboHelper(--n, b, a + b);
+            }
+        }
+
+    public:
+        // Constructors
+        BigInt() = default;
+
+        BigInt(int num) {
+            if (num == 0) {
+                digits.push_back(0);
+            } else {
+                while (num > 0) {
+                    digits.push_back(num % 10);
+                    num /= 10;
                 }
-                result.digits[i + j] -= 1;
             }
         }
-    }
-    while (result.digits.back() == 0) {  // Remove leading zeros.
-        result.digits.pop_back();
-    }
-    return result;
-}
 
-BigInt operator-(const BigInt &a, const int &num) {
-    return a - BigInt(num);
-}
+        BigInt(string str) {
+            for (int i = str.size() - 1; i > -1; --i) {
+                digits.push_back(str[i] - '0');
+            }
+        }
 
-BigInt operator*(const BigInt &a, const BigInt &b) {
-    BigInt loopIdx;
-    BigInt result;
-    BigInt toAdd;
-    if (b > a) {
-        loopIdx = a;
-        result = b;
-        toAdd = b;
-    } else {
-        loopIdx = b;
-        result = a;
-        toAdd = a;
-    }
-    while (loopIdx > BigInt(1)) {
-        result = result + toAdd;
-        loopIdx = loopIdx - 1;
-    }
-    return result;
-}
+        // Comparison operators
+        bool operator==(const BigInt &b) {
+            return digits == b.digits;
+        }
 
-BigInt operator/(const BigInt &a, const BigInt &b) {
-    BigInt remainder = a;
-    BigInt result(0);
-    while (remainder > b) {
-        remainder = remainder - b;
-        result++;
-    }
-    return result;
-}
-
-BigInt operator%(const BigInt &a, const BigInt &b) {
-    BigInt remainder = a;
-    while (remainder > b) {
-        remainder = remainder - b;
-    }
-    return remainder;
-}
-
-BigInt BigInt::operator++() {
-    *this += BigInt(1);
-    return *this;
-}
-
-BigInt BigInt::operator++(int) {
-    BigInt old = *this;
-    ++(*this);
-    return old;
-}
-
-BigInt &operator+=(BigInt &a, const BigInt &b) {
-    int aSize = int(a.size());
-    int bSize = int(b.size());
-    for (int i = 0; i < aSize; ++i) {
-        if (i < bSize) {
-            char sum = a[i] + b[i];
-            if (int(sum) > 9) {
-                if (i + 1 == aSize) {
-                    a.digits.push_back(1);
-                } else {
-                    a.digits[i + 1]++;
+        bool operator>(const BigInt &b) const {
+            int i = size();
+            int j = b.size();
+            if (i != j) {
+                return i > j;
+            } else {
+                while (i--) {
+                    if (digits[i] != b[i]) {
+                        return digits[i] > b[i];
+                    }
                 }
-                sum -= 10;
+                return false;
             }
-            a.digits[i] = sum;
-        } else {
-            if (int(a.digits[i]) > 9) {
-                if (i + 1 == aSize) {
-                    a.digits.push_back(1);
-                } else {
-                    a.digits[i + 1]++;
+        }
+
+        // Operation operators
+        BigInt &operator+=(const BigInt &b) {
+            int aSize = size();
+            int bSize = b.size();
+            char carry = 0;
+            for (int i = 0; i < max(aSize, bSize); ++i) {
+                if (i >= aSize) {
+                    digits.push_back(0);
                 }
-                a.digits[i] -= 10;
+                digits[i] += carry;
+                carry = 0;
+                if (i < bSize) {
+                    digits[i] += b[i];
+                }
+                if (digits[i] > 9) {
+                    digits[i] -= 10;
+                    carry = 1;
+                }
+            }
+            if (carry) {
+                digits.push_back(1);
+            }
+            return *this;
+        }
+
+        BigInt operator+(const BigInt &b) {
+            BigInt result = *this;
+            result += b;
+            return result;
+        }
+
+        friend BigInt operator+(const int a, const BigInt &b) {
+            BigInt result(a);
+            result += b;
+            return result;
+        }
+
+        BigInt &operator-=(const BigInt &b) {
+            int aSize = size();
+            int bSize = b.size();
+            char carry = 0;
+            for (int i = 0; i < aSize; ++i) {
+                digits[i] -= carry;
+                carry = 0;
+                if (i < bSize) {
+                    digits[i] -= b[i];
+                }
+                if (digits[i] < 0) {
+                    digits[i] += 10;
+                    carry = 1;
+                }
+            }
+            while (digits.back() == 0 && size() > 1) {  // Remove leading zeros.
+                digits.pop_back();
+            }
+            return *this;
+        }
+
+        BigInt operator-(const BigInt &b) {
+            BigInt result = *this;
+            result -= b;
+            return result;
+        }
+
+        friend BigInt operator-(const int a, const BigInt &b) {
+            BigInt result(a);
+            result -= b;
+            return result;
+        }
+
+        BigInt &operator*=(const BigInt &b) {
+            BigInt loopIdx = *this;
+            BigInt result = b;
+            BigInt toAdd = b;
+            if ((*this) > b) {
+                loopIdx = b;
+                result = *this;
+                toAdd = *this;
+            }
+            while (loopIdx > 1) {
+                result += toAdd;
+                loopIdx--;
+            }
+            *this = result;
+            return *this;
+        }
+
+        BigInt operator*(const BigInt &b) {
+            BigInt result = *this;
+            result *= b;
+            return result;
+        }
+
+        BigInt operator/(const BigInt &b) {
+            BigInt remainder = *this;
+            BigInt result(0);
+            while (remainder > b) {
+                remainder -= b;
+                result++;
+            }
+            return result;
+        }
+
+        BigInt operator%(const BigInt &b) {
+            BigInt remainder = *this;
+            while (remainder > b) {
+                remainder -= b;
+            }
+            return remainder;
+        }
+
+        // Crement operators
+        BigInt operator++() {
+            *this += 1;
+            return *this;
+        }
+
+        BigInt operator++(int) {
+            BigInt old = *this;
+            ++(*this);
+            return old;
+        }
+
+        BigInt operator--() {
+            *this -= 1;
+            return *this;
+        }
+
+        BigInt operator--(int) {
+            BigInt old = *this;
+            --(*this);
+            return old;
+        }
+
+        // Other overloads
+        BigInt &operator=(const BigInt &a) = default;
+
+        char operator[](const int i) const {
+            return digits[i];
+        }
+
+        friend ostream& operator<<(ostream &out, const BigInt &b) {
+            int size = b.digits.size();
+            if (size > 12) {
+                out << int(b.digits[size - 1]) << '.';
+                for (int i = size - 2; i > size - 8; --i) {
+                    out << int(b.digits[i]);
+                }
+                out << 'e' << size - 1;
+            } else {
+                for (int i = size - 1; i > -1; --i) {
+                    out << int(b.digits[i]);
+                }
+            }
+            return out;
+        }
+
+        // Non overloading functions
+        int size() const {
+            return digits.size();
+        }
+
+        void print() {
+            for (int i = digits.size() - 1; i > -1; --i) {
+                cout << int(digits[i]);
             }
         }
-    }
-    return a;
-}
 
-bool operator==(const BigInt &a, const BigInt &b) {
-    return a.digits == b.digits;
-}
+        BigInt fibo() {
+            return fiboHelper(*this);
+        }
 
-bool operator>(const BigInt &a, const BigInt &b) {
-    int i = a.size();
-    int j = b.size();
-    if (i != j) {
-        return i > j;
-    } else {
-        while (i--) {
-            if (a[i] != b[i]) {
-                return a[i] > b[i];
+        BigInt fact() const {
+            BigInt result(1);
+            for (BigInt i(0); *this > i; ++i) {
+                result *= i + 1;
             }
+            return result;
         }
-        return false;
-    }
-}
-
-char BigInt::operator[](const int i) const {  // index function
-    return digits[i];
-}
-
-void BigInt::print() {
-    for (int i = int(digits.size()) - 1; i > -1; --i) {
-        cout << int(digits[i]);
-    }
-}
-
-int BigInt::size() const {
-    return int(digits.size());
-}
-
-BigInt BigInt::fibo() {  // calls fiboHelper
-    return fiboHelper(*this);
-}
-
-BigInt BigInt::fact() {
-    return factHelper(*this);
-}
-
-ostream &operator<<(ostream &out, const BigInt &bigInt) {
-    int size = int(bigInt.digits.size());
-    if (size > 12) {
-        out << int(bigInt.digits[size - 1]) << '.';
-        for (int i = size - 2; i > size - 8; --i) {
-            out << int(bigInt.digits[i]);
-        }
-        out << 'e' << size - 1;
-    } else {
-        for (int i = size - 1; i > -1; --i) {
-            out << int(bigInt.digits[i]);
-        }
-    }
-    return out;
-}
+};
 
 void testUnit() {
     int space = 10;
-    cout << "\nTestUnit:\n" << flush;
+    cout << "\a\nTestUnit:\n" << flush;
     system("whoami");
     system("date");
     // initialize variables

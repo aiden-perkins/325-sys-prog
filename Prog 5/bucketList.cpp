@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
     // write all the numbers in endGame bucket to a file
     fstream out("bucketList.out", ios::out);
     for (int i = 0; i < endGame.size(); i++) {  // Bucket::size()
-        out << endGame.atIndex(i) << endl;  // Bucket::atIndex(int)
+        out << endGame.atIndex(i) << '\n';  // Bucket::atIndex(int)
     }
 
     cout << "Global Swap Count:" << globalSwapCount << endl;
